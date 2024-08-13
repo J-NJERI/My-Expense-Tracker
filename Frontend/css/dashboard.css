@@ -1,0 +1,70 @@
+/* General Dashboard Styles */
+.dashboard {
+    padding: 20px;
+}
+
+.dashboard-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dashboard-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    flex: 1;
+    min-width: 300px;
+}
+
+.dashboard-card h2 {
+    margin: 0 0 10px;
+    font-size: 1.5em;
+    color: #333;
+}
+
+.dashboard-card p {
+    margin: 0;
+    font-size: 1.2em;
+    color: #666;
+}
+
+.dashboard-card canvas {
+    width: 100% !important;
+    height: 300px;
+}
+
+.dashboard-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-card table th,
+.dashboard-card table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.dashboard-card table thead {
+    background-color: #f4f4f4;
+}
+
+.dashboard-card table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.dashboard-card table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+@media (max-width: 768px) {
+    .dashboard-content {
+        flex-direction: column;
+    }
+
+    .dashboard-card {
+        min-width: 100%;
+    }
+}

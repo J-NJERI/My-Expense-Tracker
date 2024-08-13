@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Expense Tracker</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Expense Tracker</a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="expenses.html">Expenses</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><button id="logoutBtn" style="display: none;">Logout</button></li>
+            </ul>
+        </nav>
+        <p id="userStatus">You are not logged in.</p>
+    </header>
+
+    <main>
+        <section class="profile-section">
+            <h1>User Profile</h1>
+            <div class="profile-content">
+                <div class="profile-details">
+                    <div id="profileInfo">
+                        <p><strong>Username:</strong> <span id="usernameDisplay"></span></p>
+                        <p><strong>Email:</strong> <span id="emailDisplay"></span></p>
+                        <p><strong>Member Since:</strong> <span id="memberSinceDisplay"></span></p>
+                    </div>
+                </div>
+
+                <div class="profile-update-form">
+                    <h2>Update Profile</h2>
+                    <form id="updateProfileForm">
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username" placeholder="Enter new username">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="email" id="email" name="email" placeholder="Enter new email">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password:</label>
+                            <input type="password" id="password" name="password" placeholder="Enter new password">
+                        </div>
+                        <button type="submit" class="btn">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Expense Tracker. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Fetch user profile information
+        async function fetchUserProfile() {
+            try {
+                const response = await fetch('/api/v1/get-user-profile');
+                const userProfile = await response.json();
+                return userProfile;
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                return null;
+            }
+        }
+
+        // Update user profile
+        async function updateUserProfile(data) {
+            try {
+                const response = await fetch('/api/v1/update-user-profile', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    // Refresh profile information
+                    await loadUserProfile();
+                } else {
+                    alert('Error updating profile: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error updating user profile:', error);
+                alert('Error updating profile. Please try again later.');
+            }
+        }
+
+        // Load user profile information and populate fields
+        async function loadUserProfile() {
+            const userProfile = await fetchUserProfile();
+
+            if (userProfile) {
+                document.getElementById('usernameDisplay').textContent = userProfile.username;
+                document.getElementById('emailDisplay').textContent = userProfile.email;
+                document.getElementById('memberSinceDisplay').textContent = new Date(userProfile.createdAt).toLocaleDateString();
+            } else {
+                alert('Error loading profile information. Please try again later.');
+            }
+        }
+
+        // Handle profile update form submission
+        document.getElementById('updateProfileForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const data = {
+                username: username.trim() || null,
+                email: email.trim() || null,
+                password: password.trim() || null
+            };
+
+            await updateUserProfile(data);
+        });
+
+        // Initialize user profile
+        document.addEventListener('DOMContentLoaded', loadUserProfile);
+    </script>
+
+    <script src="js/api.js"></script>
+    <script src="js/header.js"></script>
+</body>
+</html>

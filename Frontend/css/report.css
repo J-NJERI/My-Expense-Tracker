@@ -1,0 +1,64 @@
+/* General Report Styles */
+.report-content {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.report-content h1 {
+    font-size: 2em;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.report-chart {
+    margin-bottom: 20px;
+}
+
+/* Chart Container */
+.report-chart canvas {
+    width: 100%;
+    height: 400px;
+}
+
+/* Report Table Styles */
+.report-table {
+    margin-top: 20px;
+    overflow-x: auto;
+}
+
+.report-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.report-table th,
+.report-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.report-table th {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+.report-table tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.report-table tbody tr:hover {
+    background-color: #e9e9e9;
+}
+
+/* Responsive Design for Reports */
+@media (max-width: 768px) {
+    .report-chart canvas {
+        height: 300px;
+    }
+}

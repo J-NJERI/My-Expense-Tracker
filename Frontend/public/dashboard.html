@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">Expense Tracker</a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="login.html">Login</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="expenses.html">Expenses</a></li>
+                <li><a href="reports.html">Reports</a></li>
+                <li><button id="logoutBtn" style="display: none;">Logout</button></li>
+            </ul>
+        </nav>
+        <p id="userStatus">You are not logged in.</p>
+    </header>
+
+    <main>
+        <section class="dashboard">
+            <h1>Welcome to Your Dashboard</h1>
+            <div class="dashboard-content">
+                <div class="dashboard-card">
+                    <h2>Total Expenses</h2>
+                    <p id="totalExpenses">$0.00</p>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Expenses by Category</h2>
+                    <canvas id="expensesByCategory"></canvas>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Monthly Expenses</h2>
+                    <canvas id="monthlyExpenses"></canvas>
+                </div>
+                <div class="dashboard-card">
+                    <h2>Recent Transactions</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Amount</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactions">
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; MyExpense Tracker. All rights reserved.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/dashboard.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/header.js"></script>
+</body>
+</html>
