@@ -1,19 +1,22 @@
+// js/login.js
+
 document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.getElementById('registerForm');
+    const loginForm = document.getElementById('loginForm');
     
-    if (registerForm) {
-        registerForm.addEventListener('submit', async (event) => {
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             
-            const formData = new FormData(registerForm);
+            const formData = new FormData(loginForm);
             const data = {
-                username: formData.get('username'),
                 email: formData.get('email'),
                 password: formData.get('password'),
             };
             
+            // console.log('Form Data:', data);
+
             try {
-                const response = await fetch('http://localhost:5000/api/v1/register', {
+                const response = await fetch('http://localhost:5000/api/v1/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -22,14 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 if (response.ok) {
-                    alert('Registration successful!');
-                    window.location.href = 'login.html'; 
+                    alert('Login successful!');
+                    window.location.href = 'dashboard.html'; 
                 } else {
                     const error = await response.json();
-                    alert(`Registration failed: ${error.message}`);
+                    alert(`Login failed: ${error.message}`);
                 }
             } catch (error) {
-                console.error('Error during registration:', error);
+                console.error('Error during login:', error);
                 alert('An error occurred. Please try again.');
             }
         });

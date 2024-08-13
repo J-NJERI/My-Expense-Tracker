@@ -1,43 +1,60 @@
-// js/report.js
-
 document.addEventListener('DOMContentLoaded', () => {
-    fetchExpenses();
+    fetchDashboardData();
 });
 
-async function fetchExpenses() {
+async function fetchDashboardData() {
     try {
         const response = await fetch('http://localhost:5000/api/v1/get-expenses');
         if (!response.ok) {
             throw new Error('Network response was not ok.');
         }
         const expenses = await response.json();
-        generateCharts(expenses);
-        populateTable(expenses);
+
+        if (expenses.length === 0) {
+            console.warn('No expenses found');
+            return;
+        }
+
+        updateTotalExpenses(expenses);
+        generateCategoryChart(expenses);
+        generateMonthlyChart(expenses);
+        populateRecentTransactions(expenses);
     } catch (error) {
-        console.error('Error fetching expenses:', error);
+        console.error('Error fetching dashboard data:', error);
     }
 }
 
-function generateCharts(expenses) {
-    // Prepare data for charts
+function updateTotalExpenses(expenses) {
+    console.log('Expenses received:', expenses);
+
+    const totalExpenses = expenses.reduce((total, expense) => {
+        return total + parseFloat(expense.amount);
+    }, 0);
+
+    const totalExpenseElement = document.getElementById('totalExpenses');
+    if (totalExpenseElement) {
+        totalExpenseElement.textContent = `$${totalExpenses.toFixed(2)}`;
+        console.log('Total expenses updated:', totalExpenses.toFixed(2));
+    } else {
+        console.error('Element with ID "total expenses" not found.');
+    }
+}
+
+function generateCategoryChart(expenses) {
     const categories = {};
-    const monthlyTotals = Array(12).fill(0);
-
+    
     expenses.forEach(expense => {
-        // Categorize expenses
-        if (categories[expense.category]) {
-            categories[expense.category] += expense.amount;
+        const category = expense.category || 'Uncategorized';
+        if (categories[category]) {
+            categories[category] += parseFloat(expense.amount);
         } else {
-            categories[expense.category] = expense.amount;
+            categories[category] = parseFloat(expense.amount);
         }
-
-        // Calculate monthly totals
-        const month = new Date(expense.date).getMonth();
-        monthlyTotals[month] += expense.amount;
     });
 
-    // Category Chart
-    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    console.log('Categories:', categories);
+
+    const categoryCtx = document.getElementById('expensesByCategory').getContext('2d');
     new Chart(categoryCtx, {
         type: 'pie',
         data: {
@@ -84,9 +101,17 @@ function generateCharts(expenses) {
             }
         }
     });
+}
 
-    // Monthly Chart
-    const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+function generateMonthlyChart(expenses) {
+    const monthlyTotals = Array(12).fill(0);
+
+    expenses.forEach(expense => {
+        const month = new Date(expense.date).getMonth();
+        monthlyTotals[month] += parseFloat(expense.amount);
+    });
+
+    const monthlyCtx = document.getElementById('monthlyExpenses').getContext('2d');
     new Chart(monthlyCtx, {
         type: 'bar',
         data: {
@@ -116,20 +141,25 @@ function generateCharts(expenses) {
     });
 }
 
-function populateTable(expenses) {
-    const tableBody = document.getElementById('expensesTableBody');
-    tableBody.innerHTML = '';
+function populateRecentTransactions(expenses) {
+    const recentTransactions = expenses.slice(0, 5); // Show recent 5 transactions
+    const tableBody = document.getElementById('recentTransactions');
+    
+    if (tableBody) {
+        tableBody.innerHTML = '';
 
-    expenses.forEach(expense => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${expense.id}</td>
-            <td>$${expense.amount.toFixed(2)}</td>
-            <td>${expense.category}</td>
-            <td>${expense.description}</td>
-            <td>${new Date(expense.date).toLocaleDateString()}</td>
-        `;
-        tableBody.appendChild(row);
-    });
+        recentTransactions.forEach(expense => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${expense.id}</td>
+                <td>$${parseFloat(expense.amount).toFixed(2)}</td>
+                <td>${expense.category}</td>
+                <td>${expense.description}</td>
+                <td>${new Date(expense.date).toLocaleDateString()}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else {
+        console.error('Element with ID "recentTransactions" not found.');
+    }
 }
-

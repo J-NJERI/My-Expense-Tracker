@@ -10,6 +10,10 @@ const createUser = async (username, email, password) => {
    console.log('SQL Query:', insertSQL);
 
   try {
+    if (typeof password !== 'string' || password.length === 0) {
+      throw new Error('Invalid password!');
+    }
+    
     const saltRounds = 10;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -28,34 +32,38 @@ const createUser = async (username, email, password) => {
   }
 };
 
-const getUser = (email, password, res) => {
+const getUser = (email, password) => {
   const selectSQL = 'SELECT * FROM users WHERE email = ?';
   
-  db.query(selectSQL, [email], async (err, results) => {
-    if (err) {
-      console.error('Error fetching user:', err.sqlMessage);
-      return res.status(500).json({ message: 'Server Error!' });
-    }
-
-    if (results.length === 0) {
-      return res.status(401).json({ message: 'Invalid email or password!' });
-    }
-
-    const user = results[0];
-
-    try {
-      const isMatch = await bcrypt.compare(password, user.password);
-
-      if (!isMatch) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+  return new Promise((resolve, reject) => {
+    db.query(selectSQL, [email], async (err, results) => {
+      if (err) {
+        console.error('Error fetching user:', err.sqlMessage);
+        return reject({ statusCode: 500, message: 'Server Error!' });
       }
-      res.status(200).json({ message: 'Login successful', userId: user.id });
-    } catch (error) {
-      console.error('Error comparing password:', error.message);
-      return res.status(500).json({ message: 'Server Error!' });
-    }
+
+      if (results.length === 0) {
+        return reject({ statusCode: 401, message: 'Invalid email or password!' });
+      }
+
+      const user = results[0];
+
+      try {
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+          return reject({ statusCode: 401, message: 'Invalid email or password' });
+        }
+
+        resolve(user);
+      } catch (error) {
+        console.error('Error comparing password:', error.message);
+        return reject({ statusCode: 500, message: 'Server Error!' });
+      }
+    });
   });
 };
+
 
 // Export the functions
 module.exports = {

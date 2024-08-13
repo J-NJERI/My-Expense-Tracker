@@ -1,5 +1,3 @@
-// js/expense-form.js
-
 document.addEventListener('DOMContentLoaded', () => {
     fetchExpenses();
     document.getElementById('addExpenseForm').addEventListener('submit', addExpense);
@@ -50,11 +48,13 @@ function displayExpenses(expenses) {
     const tableBody = document.querySelector('#expenseList tbody');
     tableBody.innerHTML = '';
 
+    console.log('Expenses:', expenses);
+
     expenses.forEach(expense => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${expense.id}</td>
-            <td>$${expense.amount.toFixed(2)}</td>
+            <td>$${parseFloat(expense.amount).toFixed(2)}</td>
             <td>${expense.category}</td>
             <td>${expense.description}</td>
             <td>${new Date(expense.date).toLocaleDateString()}</td>

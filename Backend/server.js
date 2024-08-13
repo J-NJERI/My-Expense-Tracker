@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path')
 const {readdirSync} = require('fs');
 
 const app = express();
@@ -11,6 +12,8 @@ dotenv.config();
 app.use(express.json())
 app.use(cors())
 
+app.use(express.static(path.join(__dirname, '../Frontend/public')));
+
 //routes
 readdirSync('./routes').forEach((file) => {
     if (file.endsWith('.js')) {
@@ -19,9 +22,13 @@ readdirSync('./routes').forEach((file) => {
     }
 });
 
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../Frontend/public', 'index.html'));
+})
+
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res,status(500).json({message: 'Something went wrong!'});
+    res.status(500).json({message: 'Something went wrong!'});
 });
 
 app.listen(5000, () => {

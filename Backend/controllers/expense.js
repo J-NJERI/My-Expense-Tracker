@@ -4,20 +4,26 @@ exports.addExpense = async (req, res) => {
     const { amount, category, description, date } = req.body;
 
     try {
-        //validations
-        if(!category || !description  || !date){
-            return res.status(400).json({message: 'All fields are required!'})
-        }
-        // if(amount<= 0 || typeof amount !== 'number'){
-        //     return res.status(400).json({message: 'Amount must be a positive number'})
-        // }
-        insertExpense(amount, date, category, description);
+        // Convert amount to a number
+        const numericAmount = parseFloat(amount);
 
-        res.status(200).json({message: 'Expense Added'});
+        // Validations
+        if (!category || !description || !date) {
+            return res.status(400).json({ message: 'All fields are required!' });
+        }
+        if (isNaN(numericAmount) || numericAmount <= 0) {
+            return res.status(400).json({ message: 'Amount must be a positive number' });
+        }
+
+        // Call to insertExpense function
+        insertExpense(numericAmount, date, category, description);
+
+        res.status(200).json({ message: 'Expense Added' });
     } catch (error) {
-        res.status(500).json({message: 'Server error!'});
+        res.status(500).json({ message: 'Server error!' });
     }
 };
+
 
 exports.getExpense = (req, res) => {
     getAllExpenses((incomes) => {
