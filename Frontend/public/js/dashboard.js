@@ -1,10 +1,31 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchDashboardData();
+    const token = localStorage.getItem('authToken');
+    console.log('Retrieved token:', token);
+
+    if (!token) {
+        alert('You must be logged in to view the dashboard.');
+        window.location.href = 'login.html';
+    } else {
+        document.getElementById('loginNav').style.display = 'none';
+        document.getElementById('registerNav').style.display = 'none';
+        document.getElementById('logoutNav').style.display = 'block';
+        fetchDashboardData();
+    }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('authToken');
+    window.location.href = 'login.html';
 });
 
 async function fetchDashboardData() {
     try {
-        const response = await fetch('http://localhost:5000/api/v1/get-expenses');
+        const response = await fetch('http://localhost:5000/api/v1/get-expenses', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+            }
+        });
+
         if (!response.ok) {
             throw new Error('Network response was not ok.');
         }

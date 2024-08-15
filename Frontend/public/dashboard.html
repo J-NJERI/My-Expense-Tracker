@@ -13,13 +13,14 @@
             <a href="index.html" class="logo">Expense Tracker</a>
             <ul>
                 <li><a href="index.html">Home</a></li>
-                <li><a href="login.html">Login</a></li>
-                <li><a href="register.html">Register</a></li>
+                <li id="loginNav" style="display: none;"><a href="login.html">Login</a></li>
+                <li id="registerNav" style="display: none;"><a href="register.html">Register</a></li>
                 <li><a href="expenses.html">Expenses</a></li>
                 
-                <li><button id="logoutBtn" style="display: none;">Logout</button></li>
+                <li id="logoutNav" style="display: none;"><button id="logoutBtn" style="display: none;">Logout</button></li>
             </ul>
         </nav>
+        <p id="userStatus">You are not logged in.</p>
     </header>
 
     <main>

@@ -4,9 +4,9 @@ const dotenv = require('dotenv');
 const path = require('path')
 const {readdirSync} = require('fs');
 
-const app = express();
-
 dotenv.config();
+
+const app = express();
 
 //middleware
 app.use(express.json())

@@ -1,6 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
-    fetchExpenses();
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+        alert('You must be logged in to manage your expenses.');
+        window.location.href = 'login.html';
+        return;
+    }
+
+    document.getElementById('loginNav').style.display = 'none';
+    document.getElementById('registerNav').style.display = 'none';
+    document.getElementById('logoutNav').style.display = 'block';
+
     document.getElementById('addExpenseForm').addEventListener('submit', addExpense);
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('authToken');
+        window.location.href = 'login.html';
+    });
+    fetchExpenses();
 });
 
 async function addExpense(event) {
@@ -10,42 +25,79 @@ async function addExpense(event) {
     const category = document.getElementById('category').value;
     const description = document.getElementById('description').value;
     const date = document.getElementById('date').value;
+    const token = localStorage.getItem('authToken');
+
+    if(!token) {
+        alert('You must be logged in to add expense.');
+        window.location.href = 'login.html';
+        return;
+    }
 
     try {
         const response = await fetch('http://localhost:5000/api/v1/add-expense', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ amount, category, description, date })
         });
 
         if (!response.ok) {
-            throw new Error('Failed to add expense');
+            const error = await response.json();
+            console.error('Error adding expense:', error.message || 'Unknown error');
+            alert(`Failed to add expense: ${error.message}`);
+            return;
         }
 
         document.getElementById('addExpenseForm').reset();
         fetchExpenses();
     } catch (error) {
         console.error('Error adding expense:', error);
+        alert('An error occurred while adding the expense.');
     }
 }
 
 async function fetchExpenses() {
+    const token = localStorage.getItem('authToken');
+
+    if (!token) {
+        alert('You must be logged in to view expenses.');
+        window.location.href = 'login.html';
+        return;
+    }
+
     try {
-        const response = await fetch('http://localhost:5000/api/v1/get-expenses');
+        const response = await fetch('http://localhost:5000/api/v1/get-expenses', {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        });
+
         if (!response.ok) {
-            throw new Error('Failed to fetch expenses');
+            const error = await response.json();
+            console.error('Error fetching expenses:',error.message);
+            alert(`Failed to fetch expenses: ${error.message}`);
+            return;
         }
+
         const expenses = await response.json();
         displayExpenses(expenses);
     } catch (error) {
         console.error('Error fetching expenses:', error);
+        alert('An error occurred while fetching expenses.');
     }
 }
 
 function displayExpenses(expenses) {
     const tableBody = document.querySelector('#expenseList tbody');
+
+    if (!tableBody) {
+        console.error('Table body element not found.');
+        return;
+    }
+
     tableBody.innerHTML = '';
 
     console.log('Expenses:', expenses);
@@ -65,18 +117,28 @@ function displayExpenses(expenses) {
 }
 
 async function deleteExpense(id) {
+    const token = localStorage.getItem('authToken');
+
     try {
         const response = await fetch(`http://localhost:5000/api/v1/delete-expense/${id}`, {
             method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
         });
 
         if (!response.ok) {
-            throw new Error('Failed to delete expense');
+            const error = await response.json();
+            console.error('Error deleting expense:', error.message || 'Unknown error');
+            alert(`Failed to delete expense: ${error.message}`);
+            return;
         }
 
         fetchExpenses();
     } catch (error) {
         console.error('Error deleting expense:', error);
+        alert('An error occurred while deleting the expense.');
     }
 }
 

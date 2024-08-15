@@ -1,5 +1,3 @@
-// js/login.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     
@@ -25,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 
                 if (response.ok) {
+                    const { token } = await response.json();
+                    localStorage.setItem('authToken', token);
+                    console.log('Token stored:', token)
                     alert('Login successful!');
                     window.location.href = 'dashboard.html'; 
                 } else {

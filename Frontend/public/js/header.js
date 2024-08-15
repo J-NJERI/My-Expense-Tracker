@@ -2,15 +2,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const logoutButton = document.getElementById('logoutBtn');
     const userStatus = document.getElementById('userStatus');
     
+    if (!logoutButton || !userStatus) {
+        console.error('Required elements not found: logoutBtn or userStatus');
+        return;
+    }
     // Check if the user is logged in
     const checkLoginStatus = () => {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-            // User is logged in
-            userStatus.textContent = `Welcome, User ${userId}`;
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            userStatus.textContent = 'You are logged in.';
             logoutButton.style.display = 'block';
         } else {
-            // User is not logged in
             userStatus.textContent = 'You are not logged in.';
             logoutButton.style.display = 'none';
         }
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle logout
     if (logoutButton) {
         logoutButton.addEventListener('click', () => {
-            localStorage.removeItem('userId');
+            localStorage.removeItem('authToken');
             userStatus.textContent = 'You have been logged out.';
             logoutButton.style.display = 'none';
             // Optionally redirect to login page
